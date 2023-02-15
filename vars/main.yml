@@ -1,0 +1,9 @@
+---
+
+# Convert the transip_domains data into a data structure that can be consumed by the TransIP API
+_transip_nameservers: "{{ transip_domains | community.general.json_query(_ns_query) }}"
+_ns_query: "[?nameservers].{ domain: name, nameservers: nameservers[].{ hostname: hostname || @, ipv4: ipv4 || ``, ipv6: ipv6 || `` } }"
+
+# Convert the transip_domains data into a data structure that can be consumed by the TransIP API
+_transip_dns: "{{ transip_domains | community.general.json_query(_dns_query) }}"
+_dns_query: "[?dns_records].{ domain: name, records: dns_records[].{ name: name, expire: expire || `300`, type: type, content: content } }"

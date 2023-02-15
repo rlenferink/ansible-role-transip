@@ -1,0 +1,8 @@
+*.swp
+*.iml
+.idea
+
+*.retry
+*/__pycache__
+*.pyc
+.cache

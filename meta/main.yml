@@ -1,0 +1,32 @@
+---
+dependencies: []
+
+galaxy_info:
+  role_name: transip
+  author: rlenferink
+  description: TransIP domain management.
+  company: ""
+  license: "license (MIT)"
+  min_ansible_version: 2.9
+  platforms:
+    - name: EL
+      versions:
+        - all
+    - name: Fedora
+      versions:
+        - all
+    - name: Amazon
+      versions:
+        - all
+    - name: Debian
+      versions:
+        - all
+    - name: Ubuntu
+      versions:
+        - trusty
+        - xenial
+        - bionic
+  galaxy_tags:
+    - transip
+    - domain
+    - dns

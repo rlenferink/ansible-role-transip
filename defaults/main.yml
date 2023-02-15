@@ -1,0 +1,17 @@
+---
+
+transip_domains: []
+#  - name: example.com
+#
+#    # All nameservers for the domain, not specified entries will be removed
+#    nameservers:
+#      - ns0.transip.net
+#      - ns1.transip.nl
+#      - ns2.transip.eu
+#
+#    # All DNS records for the domain, not specified entries will be removed
+#    dns_records:
+#      - name: www
+#        expire: 86400
+#        type: "A"
+#        content: "127.0.0.1"

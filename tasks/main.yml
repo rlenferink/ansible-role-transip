@@ -1,0 +1,29 @@
+---
+
+- name: Generate API token
+  transip_auth:
+    user: "{{ transip_user }}"
+    private_key: "{{ transip_private_key }}"
+  delegate_to: localhost
+  run_once: true
+  register: _auth_result
+  changed_when: false
+  no_log: true # Do not (accidentally) print the API access token
+
+- name: Ensure nameservers are set
+  transip_nameserver:
+    token: "{{ _auth_result['token'] }}"
+    domain: "{{ item.domain }}"
+    nameservers: "{{ item.nameservers }}"
+  loop: "{{ _transip_nameservers | default([]) }}"
+  delegate_to: localhost
+  run_once: true
+
+- name: Ensure DNS records are set
+  transip_dns:
+    token: "{{ _auth_result['token'] }}"
+    domain: "{{ item.domain }}"
+    records: "{{ item.records }}"
+  loop: "{{ _transip_dns | default([]) }}"
+  delegate_to: localhost
+  run_once: true
