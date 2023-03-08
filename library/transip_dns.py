@@ -79,8 +79,8 @@ def main():
         existing_records = fetch_dns_records(request_headers, domain)
 
         # Sort the records before comparing, order doesn't matter for DNS records
-        existing_records.sort(key=lambda x: (x['name'], x['type']), reverse=False)
-        records.sort(key=lambda x: (x['name'], x['type']), reverse=False)
+        existing_records.sort(key=lambda x: (x['name'], x['type'], x['content']), reverse=False)
+        records.sort(key=lambda x: (x['name'], x['type'], x['content']), reverse=False)
 
         # Only perform an update if the DNS entries differ
         if existing_records != records:
