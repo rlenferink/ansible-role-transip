@@ -49,6 +49,33 @@ def update_dns_records(headers, domain_name, records):
     raise Exception(response.json()["error"])
 
 
+def prepare_and_merge_dns_records(existing_records, proposed_records):
+    combined_records = []
+
+    for record in proposed_records:
+        new_record = {
+            # Use the following information to build a TransIP API accepted record
+            'name': record['name'],
+            'type': record['type'],
+            'expire': record['expire'],
+            'content': record['content'],
+        }
+
+        if 'external' in record and record['external']:
+            try:
+                existing_record = next(x for x in existing_records
+                                       if record['name'] == x['name'] and record['type'] == x['type'])
+
+                # Use value of existing record
+                new_record['content'] = existing_record['content']
+            except StopIteration:
+                raise Exception(f"Unable to find existing 'name={record['name']},type={record['type']}' record")
+
+        combined_records.append(new_record)
+
+    return combined_records
+
+
 def main():
     module = AnsibleModule(
         argument_spec=dict(
@@ -64,7 +91,7 @@ def main():
     # Module parameters
     token = module.params['token']
     domain = module.params['domain']
-    records = module.params['records']
+    proposed_records = module.params['records']
 
     # Headers to use for communication with the TransIP API
     request_headers = {
@@ -80,14 +107,17 @@ def main():
 
         # Sort the records before comparing, order doesn't matter for DNS records
         existing_records.sort(key=lambda x: (x['name'], x['type'], x['content']), reverse=False)
-        records.sort(key=lambda x: (x['name'], x['type'], x['content']), reverse=False)
+        proposed_records.sort(key=lambda x: (x['name'], x['type'], x['content']), reverse=False)
+
+        # Merge 'external' records from existing records
+        combined_records = prepare_and_merge_dns_records(existing_records, proposed_records)
 
         # Only perform an update if the DNS entries differ
-        if existing_records != records:
-            update_dns_records(request_headers, domain, records)
+        if existing_records != combined_records:
+            update_dns_records(request_headers, domain, combined_records)
 
             result['domain'] = domain
-            result['records'] = records
+            result['records'] = combined_records
             result.update(changed=True)
     except Exception as e:
         module.fail_json(msg=f"Error while updating DNS records: {e.args}")

@@ -48,6 +48,8 @@ transip_domains:
         expire: 86400
         type: "A"
         content: "1.2.3.4"
+        external: false # Optional record, in case this is 'true' the existing record content is taken. This is useful
+                        # for e.g. a Dynamic DNS (DDNS) record, which is updated through other means.
 
   - name: my-domain-2.com
     nameservers: # This domain uses the Cloudflare nameservers; so don't specify DNS records here.
