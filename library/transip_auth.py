@@ -13,7 +13,7 @@ DOCUMENTATION = """
 module: transip_auth
 author: Roy Lenferink (@rlenferink)
 short_description: module for generating a TransIP access token
-requirements: [openssl]
+requirements: []
 version_added: "0.1.0"
 description:
   - Generate an API token to communicate with the TransIP API.
@@ -28,7 +28,10 @@ import json
 import random
 import requests
 import string
-from OpenSSL import crypto
+from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.primitives.asymmetric import padding
+from cryptography.hazmat.primitives import hashes
+
 
 from ansible.module_utils.basic import AnsibleModule
 
@@ -51,8 +54,15 @@ def generate_message(user, ro, exp, label, global_key):
 
 
 def sign_message(message, private_key):
-    pkey = crypto.load_privatekey(crypto.FILETYPE_PEM, private_key)
-    sig = crypto.sign(pkey, message.encode("utf-8"), "sha512")
+    pkey = serialization.load_pem_private_key(
+        private_key.encode(),
+        password=None 
+    )
+    sig = pkey.sign(
+            message.encode('utf-8'),
+            padding.PKCS1v15(),
+            hashes.SHA512()
+    )
     sig_base64 = base64.b64encode(sig)
     return sig_base64
 
