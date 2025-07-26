@@ -56,7 +56,7 @@ def generate_message(user, ro, exp, label, global_key):
 def sign_message(message, private_key):
     pkey = serialization.load_pem_private_key(
         private_key.encode(),
-        password=None 
+        password=None
     )
     sig = pkey.sign(
             message.encode('utf-8'),
