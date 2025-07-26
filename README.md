@@ -5,7 +5,7 @@ and DNS management.
 
 ## Requirements
 
-The python `pyOpenSSL` and `requests` packages are required on the Ansible executor node.
+The python `requests` package is required on the Ansible executor node.
 
 ## Role modules
 
